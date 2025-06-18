@@ -23,12 +23,11 @@
                 let button;
                 fetch('/api/github-profile').then(res => res.json()).then(data => {
                     document.getElementById('profile').innerHTML = `
-                    <h2>${data.name} (${data.login})</h2>
-                    <img src="${data.avatar_url}" width="100" />
-                    <p>${data.bio}</p>
-                    <p><a class="link" href="${data.html_url}">GitHub Profile</a></p>
-                    <p>Repositories: ${data.public_repos}</p>`;
-                }).catch(err => {
+                        <h2>${data.name} (${data.login})</h2>
+                        <img src="${data.avatar_url}" width="100" />
+                        <p><a class="link" href="${data.html_url}">GitHub Profile</a></p>
+                        <p>Repositories: ${data.public_repos}</p>`;
+                    }).catch(err => {
                     document.getElementById('profile').textContent = 'Error loading profile.';
                 });
                 fetch('/api/github-repos').then(res => res.json()).then(repos => {
@@ -52,7 +51,9 @@
                         }
                         button.addEventListener("click", () => {
                             document.getElementById('readme').textContent = "";
-                            parent.removeChild(button);
+                            if (parent.contains(button)) {
+                                parent.removeChild(button);
+                            }
                         });
                     });
                 }

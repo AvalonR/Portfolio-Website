@@ -27,6 +27,7 @@ const server = http.createServer(async (req, res) => {
         login: data.login,
         name: data.name,
         avatar_url: data.avatar_url,
+        html_url: data.html_url,
         public_repos: data.public_repos,
       };
       res.writeHead(200, { "Content-Type": "application/json" });
