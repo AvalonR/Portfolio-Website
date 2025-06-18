@@ -4,12 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Website</title>
-    <style>
-
-    </style>
     </head>
-    <body>
-        <script <source src="./mywebsite.js" type="module">></script>
+    <body id="main">
+    <link rel="stylesheet" href="./webstyle.css" />
+        <h1 id="in-pagetitle">MY PORTFOLIO</h1>
+        <aside id="links">
+            <a class="link" href="https://github.com/AvalonR">GitHub: https://github.com/AvalonR</a> 
+            <a class="link" href="https://linkedin.com/in/roman-kysliak-278328332">LinkeIn: https://linkedin.com/in/roman-kysliak-278328332</a> 
+        </aside>
+        <div id="mainscroll">
+            <h1>GitHub Info</h1>
+            <div id="profile">Loading...</div>
+
+            <ul id="repo-list"></ul>
+
+            <pre id="readme" style="white-space: pre-wrap;"></pre>
+            <script>
+                let button;
+                fetch('/api/github-profile').then(res => res.json()).then(data => {
+                    document.getElementById('profile').innerHTML = `
+                    <h2>${data.name} (${data.login})</h2>
+                    <img src="${data.avatar_url}" width="100" />
+                    <p>${data.bio}</p>
+                    <p><a class="link" href="${data.html_url}">GitHub Profile</a></p>
+                    <p>Repositories: ${data.public_repos}</p>`;
+                }).catch(err => {
+                    document.getElementById('profile').textContent = 'Error loading profile.';
+                });
+                fetch('/api/github-repos').then(res => res.json()).then(repos => {
+                     const list = document.getElementById('repo-list');
+                     repos.forEach(repo => {
+                     const li = document.createElement('li');
+                     li.innerHTML = `<a class="link" href="#">${repo.name}</a>`;
+                     li.onclick = () => loadReadme(repo.name);
+                     list.appendChild(li);
+                     });
+                });
+                const parent = document.getElementById("mainscroll");
+                function loadReadme(repo) {
+                    fetch(`/api/github-readme?repo=${repo}`).then(res => res.text()).then(text => {
+                        document.getElementById('readme').textContent = "README\n" + text;
+                        if (document.getElementById('closeReadme') == null) {
+                            button = document.createElement("button");
+                            button.id = "closeReadme";
+                            button.textContent = "Close";
+                            parent.appendChild(button);
+                        }
+                        button.addEventListener("click", () => {
+                            document.getElementById('readme').textContent = "";
+                            parent.removeChild(button);
+                        });
+                    });
+                }
+            </script>           
+        </div>
     </body>
 </html>
 
