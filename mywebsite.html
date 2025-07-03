@@ -8,26 +8,27 @@
     <link rel="stylesheet" href="./webstyle.css" />
 </head>
 
-<body id="main" class="min-h-screen bg-linear-to-b/longer from-black to-white transition-all duration-500">
+<body id="main" class="min-h-screen bg-linear-to-b/longer from-black to-white text-shadow-lg ">
     <header class="flex">
-        <h1 class="text-white text-3xl font-bold py-5 px-8">My Portfolio</h1>
-        <aside id="links" class=" bg-radial from-black to-gray-800 border border-gray-400 p-3 w-3/12 ml-auto">
+        <h1 class="text-white text-4xl font-bold py-5 px-8">My Portfolio</h1>
+        <aside id="links"
+            class="m-3 bg-radial from-black to-gray-800 border border-gray-400 p-3 w-3/12 ml-auto rounded-md shadow-2xl">
             <a target="_blank" rel="noopener noreferrer"
-                class="text-white line-clamp-2 cursor-pointer hover:text-blue-400"
+                class="inline text-white line-clamp-2 cursor-pointer hover:text-blue-400 transition-all duration-300"
                 href="https://github.com/AvalonR">GitHub:
-                https://github.com/AvalonR</a>
+                https://github.com/AvalonR<br></a>
             <a target="_blank" rel="noopener noreferrer"
-                class="text-white line-clamp-2 cursor-pointer hover:text-blue-400"
+                class="inline text-white line-clamp-2 cursor-pointer hover:text-blue-400 transition-all duration-300"
                 href="https://linkedin.com/in/roman-kysliak-278328332">LinkeIn:
                 https://linkedin.com/in/roman-kysliak-278328332</a>
         </aside>
     </header>
     <div id="mainscroll"
-        class="block bg-radial from-black to-gray-800 text-white border border-gray-400 p-3 w-5/12 mx-auto">
+        class="block bg-radial from-black to-gray-800 text-white border border-gray-400 p-3 w-5/12 mx-auto rounded-md shadow-2xl">
         <h1 class="text-white text-2xl py-1 px-1">GitHub Info</h1>
         <div id="profile" class="">Loading...</div>
 
-        <ul id="repo-list" class="list-inside list-disc"></ul>
+        <ul id="repo-list" class="list-disc list-inside space-y-2"></ul>
 
         <pre id="readme" style="white-space: pre-wrap;"
             class="max-h-0 overflow-hidden transition-all duration-500 text-justify">
@@ -37,8 +38,8 @@
                 document.getElementById('profile').innerHTML = `
                         <h2 class="">${data.name} (${data.login})</h2>
                         <img src="${data.avatar_url}" width="120" class="" />
-                        <p><a target="_blank" rel="noopener noreferrer" class="link cursor-pointer hover:text-blue-400" href="${data.html_url}">GitHub Profile</a></p>
-                        <p class="py-3">Repositories: ${data.public_repos}</p>`;
+                        <p><a target="_blank" rel="noopener noreferrer" class="link cursor-pointer hover:text-blue-400 transition-all duration-300" href="${data.html_url}">GitHub Profile</a></p>
+                        <p class="py-3 text-shadow-black">Repositories: ${data.public_repos}</p>`;
             }).catch(err => {
                 document.getElementById('profile').textContent = 'Error loading profile.';
             });
@@ -46,8 +47,18 @@
                 const list = document.getElementById('repo-list');
                 repos.forEach(repo => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<a class="link cursor-pointer hover:text-blue-400 ">${repo.name}</a>`;
-                    li.onclick = () => loadReadme(repo.name);
+                    const a = document.createElement('a');
+                    a.tabIndex = 0;
+                    a.className = `link inline cursor-pointer hover:text-blue-400 transition-all duration-300 px-0 py-0`;
+                    a.textContent = repo.name;
+                    a.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            a.click();
+                        }
+                    });
+                    a.onclick = () => loadReadme(repo.name);
+                    li.appendChild(a);
                     list.appendChild(li);
                 });
             });
@@ -56,7 +67,6 @@
                 fetch(`/api/github-readme?repo=${repo}`).then(res => res.text()).then(text => {
                     const readme = document.getElementById('readme');
                     if (readme.textContent != "README\n" + text) {
-                        // document.getElementById("main").className = "min-h-screen bg-linear-to-b/longer from-blue-500 to-teal-50";
                         readme.textContent = "README\n" + text;
                         readme.style.maxHeight = "0px";
                         readme.style.opacity = "0";
